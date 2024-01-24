@@ -6,7 +6,9 @@ import tumble.app.tumble.domain.models.notifications.EventNotification
 import tumble.app.tumble.domain.models.notifications.LocalNotification
 import tumble.app.tumble.domain.models.notifications.NotificationType
 import tumble.app.tumble.domain.models.realm.Event
+import javax.inject.Singleton
 
+@Singleton
 class NotificationManager: NotificationApiService {
     override fun scheduleNotification(
         notification: LocalNotification,

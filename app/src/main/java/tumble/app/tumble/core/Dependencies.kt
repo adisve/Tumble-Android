@@ -14,6 +14,7 @@ import tumble.app.tumble.data.api.auth.AuthApiService
 import tumble.app.tumble.data.api.auth.AuthManager
 import tumble.app.tumble.data.api.kronox.KronoxApiService
 import tumble.app.tumble.data.api.kronox.KronoxManager
+import tumble.app.tumble.data.notifications.NotificationManager
 import tumble.app.tumble.data.repository.preferences.DataStoreManager
 import tumble.app.tumble.data.repository.realm.RealmManager
 import tumble.app.tumble.data.repository.securestorage.SecureStorageManager
@@ -31,6 +32,16 @@ object KronoxModule {
     @Singleton
     fun provideKronoxManager(kronoxApiService: KronoxApiService): KronoxManager {
         return KronoxManager(kronoxApiService)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NotificationModule {
+    @Provides
+    @Singleton
+    fun provideNotificationManager(): NotificationManager {
+        return NotificationManager()
     }
 }
 
