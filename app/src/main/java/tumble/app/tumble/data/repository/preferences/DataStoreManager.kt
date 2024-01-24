@@ -1,4 +1,4 @@
-package tumble.app.tumble.datasource.preferences
+package tumble.app.tumble.data.repository.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -15,9 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import tumble.app.tumble.domain.models.presentation.ViewType
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
+
+data class CombinedData(val authSchoolId: Int? = null, val autoSignup: Boolean? = null, val viewType: ViewType? = null, val userOnBoarded: Boolean? = null)
 
 @Singleton
 class DataStoreManager @Inject constructor(
@@ -42,11 +45,19 @@ class DataStoreManager @Inject constructor(
     private val _userOnBoarded = MutableStateFlow(false)
     val userOnBoarded: StateFlow<Boolean> = _userOnBoarded
 
+    private val _autoSignup = MutableStateFlow(false)
+    val autoSignup: StateFlow<Boolean> = _autoSignup
+
+    private val _viewType = MutableStateFlow(ViewType.WEEK)
+    val viewType: StateFlow<ViewType> = _viewType
+
     init {
         context.dataStore.data
             .map { preferences ->
                 _authSchoolId.value = preferences[PreferencesKeys.AUTH_SCHOOL_ID] ?: -1
                 _userOnBoarded.value = preferences[PreferencesKeys.USER_ON_BOARDED] ?: false
+                _viewType.value = ViewType.valueOf(preferences[PreferencesKeys.VIEW_TYPE] ?: ViewType.WEEK.displayName)
+                _autoSignup.value = preferences[PreferencesKeys.AUTO_SIGNUP] ?: false
             }
             .launchIn(scope)
     }
@@ -83,9 +94,9 @@ class DataStoreManager @Inject constructor(
         }
     }
 
-    suspend fun setBookmarksViewType(type: String) {
+    suspend fun setBookmarksViewType(type: ViewType) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.VIEW_TYPE] = type
+            preferences[PreferencesKeys.VIEW_TYPE] = type.displayName
         }
     }
 }

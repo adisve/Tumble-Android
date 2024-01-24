@@ -3,12 +3,6 @@ package tumble.app.tumble.domain.models.network
 import com.squareup.moshi.JsonClass
 import java.util.*
 
-typealias NewsItems = List<NetworkResponse.NotificationContent>
-typealias Availabilities = Map<String, Map<Int, NetworkResponse.AvailabilityValue>>?
-typealias KronoxResources = List<NetworkResponse.KronoxResourceElement>
-typealias KronoxUserBookings = List<NetworkResponse.KronoxUserBookingElement>
-
-
 sealed class NetworkResponse {
 
     @JsonClass(generateAdapter = true)
@@ -22,7 +16,7 @@ sealed class NetworkResponse {
         val id: String,
         val cachedAt: String,
         val days: List<Day>
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Day(
@@ -33,7 +27,7 @@ sealed class NetworkResponse {
         val events: List<Event>,
         @Transient
         val id: UUID = UUID.randomUUID()
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Event(
@@ -46,14 +40,14 @@ sealed class NetworkResponse {
         val teachers: List<Teacher>,
         val isSpecial: Boolean,
         val lastModified: String
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Course(
         val id: String,
         val swedishName: String,
         val englishName: String
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Location(
@@ -62,35 +56,41 @@ sealed class NetworkResponse {
         val building: String,
         val floor: String,
         val maxSeats: Int
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Teacher(
         val id: String,
         val firstName: String,
         val lastName: String
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Search(
         val count: Int,
         val items: List<Programme>
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Programme(
         val id: String,
         val title: String,
         val subtitle: String
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class KronoxUser(
         val name: String,
         val username: String,
         val refreshToken: String,
-        val sessionToken: String
-    )
+        val sessionDetails: SessionDetails
+    ): NetworkResponse()
+
+    @JsonClass(generateAdapter = true)
+    data class SessionDetails(
+        val sessionToken: String,
+        val sessionLocation: String
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class KronoxCompleteUserEvent(
@@ -98,7 +98,7 @@ sealed class NetworkResponse {
         val registeredEvents: List<AvailableKronoxUserEvent>?,
         val availableEvents: List<AvailableKronoxUserEvent>?,
         val unregisteredEvents: List<AvailableKronoxUserEvent>?
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class AvailableKronoxUserEvent(
@@ -116,7 +116,7 @@ sealed class NetworkResponse {
         val isRegistered: Boolean,
         val supportAvailable: Boolean,
         val requiresChoosingLocation: Boolean
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class UpcomingKronoxUserEvent(
@@ -127,7 +127,7 @@ sealed class NetworkResponse {
         val firstSignupDate: String,
         @Transient
         val id: UUID = UUID.randomUUID()
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class KronoxCompleteUserResource(
@@ -137,7 +137,7 @@ sealed class NetworkResponse {
         val locationIDS: JSONNull?,
         val date: JSONNull?,
         val availabilities: JSONNull?
-    )
+    ): NetworkResponse()
 
 
     @JsonClass(generateAdapter = true)
@@ -147,8 +147,8 @@ sealed class NetworkResponse {
         val timeSlots: List<TimeSlot>?,
         val date: String?,
         val locationIDS: List<String>?,
-        val availabilities: Availabilities
-    )
+        val availabilities: Map<String, Map<Int, AvailabilityValue>>?
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class AvailabilityValue(
@@ -157,7 +157,7 @@ sealed class NetworkResponse {
         val resourceType: String?,
         val timeSlotID: String?,
         val bookedBy: String?
-    )
+    ): NetworkResponse()
 
     enum class AvailabilityEnum {
         UNAVAILABLE,
@@ -171,8 +171,7 @@ sealed class NetworkResponse {
         val from: String?,
         val to: String?,
         val duration: String?
-    )
-
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class KronoxUserBookingElement(
@@ -184,13 +183,19 @@ sealed class NetworkResponse {
         val showUnBookButton: Boolean,
         val confirmationOpen: String?,
         val confirmationClosed: String?
-    )
+    ): NetworkResponse()
+
+    @JsonClass(generateAdapter = true)
+    data class KronoxUserBookings(
+        val bookings: List<KronoxUserBookingElement>
+    ): NetworkResponse()
+
 
     @JsonClass(generateAdapter = true)
     data class KronoxEventRegistration(
         val successfulRegistrations: List<Registration>?,
         val failedRegistrations: List<Registration>?
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class Registration(
@@ -206,13 +211,13 @@ sealed class NetworkResponse {
         val isRegistered: Boolean?,
         val supportAvailable: Boolean?,
         val requiresChoosingLocation: Boolean?
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class ErrorMessage(
         val message: String,
         var statusCode: Int? = null
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     data class NotificationContent(
@@ -221,7 +226,7 @@ sealed class NetworkResponse {
         val body: String,
         val longBody: String?,
         val timestamp: String // ISO date string
-    )
+    ): NetworkResponse()
 
     @JsonClass(generateAdapter = true)
     object JSONNull

@@ -1,4 +1,4 @@
-package tumble.app.tumble.datasource.realm
+package tumble.app.tumble.data.repository.realm
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
